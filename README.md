@@ -4,7 +4,7 @@
 
 Um aplicativo moderno de gerenciamento de tarefas desenvolvido com React, TypeScript e Tailwind CSS. Esta aplicação permite aos usuários organizar suas atividades diárias de forma eficiente, com uma interface intuitiva e responsiva.
 
-![Captura de tela do aplicativo](https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=800&q=80)
+![Uploading Redes Pets (2).png…]()
 
 ## Funcionalidades
 
