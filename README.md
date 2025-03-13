@@ -1,10 +1,11 @@
 # Gerenciador de Tarefas
 
+C:\Users\devel\OneDrive\Documentos\GitHub\Meu-portfolio-freelancer\public\Projetos\TodosProjetos(4).png
+
 ## Sobre o Projeto
 
 Um aplicativo moderno de gerenciamento de tarefas desenvolvido com React, TypeScript e Tailwind CSS. Esta aplicação permite aos usuários organizar suas atividades diárias de forma eficiente, com uma interface intuitiva e responsiva.
 
-![Uploading Redes Pets (2).png…]()
 
 ## Funcionalidades
 
