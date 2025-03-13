@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "./ui/button";
-import { PlusCircle, ListTodo, ClipboardList } from "lucide-react";
+import { Button } from "./ui/button"; // Verifique se o caminho está correto.
+import { PlusCircle, ClipboardList } from "lucide-react";
 
 interface EmptyStateProps {
   title?: string;

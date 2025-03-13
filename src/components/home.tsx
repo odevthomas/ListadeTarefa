@@ -7,308 +7,416 @@ import EmptyState from "./EmptyState";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import { v4 as uuidv4 } from "uuid";
 
-interface Task {
+interface Tarefa {
   id: string;
-  title: string;
-  category: string;
-  priority: "low" | "medium" | "high";
-  dueDate: string;
-  completed: boolean;
+  titulo: string;
+  categoria: string;
+  prioridade: "baixa" | "media" | "alta";
+  dataVencimento: string;
+  concluida: boolean;
 }
 
-interface FilterState {
-  category: string;
-  priority: string;
-  date: string;
+interface EstadoFiltro {
+  categoria: string;
+  prioridade: string;
+  data: string;
   status: string;
 }
 
 const Home = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
-  const [filters, setFilters] = useState<FilterState>({
-    category: "all",
-    priority: "all",
-    date: "all",
-    status: "all",
+  const [tarefas, setTarefas] = useState<Tarefa[]>([]);
+  const [tarefasFiltradas, setTarefasFiltradas] = useState<Tarefa[]>([]);
+  const [filtros, setFiltros] = useState<EstadoFiltro>({
+    categoria: "todas",
+    prioridade: "todas",
+    data: "todas",
+    status: "todas",
   });
-  const [searchTerm, setSearchTerm] = useState("");
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [taskDialogOpen, setTaskDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [currentTask, setCurrentTask] = useState<Task | null>(null);
-  const [dialogMode, setDialogMode] = useState<"add" | "edit">("add");
-  const [isLoading, setIsLoading] = useState(true);
+  const [termoBusca, setTermoBusca] = useState("");
+  const [tema, setTema] = useState<"claro" | "escuro">("claro");
+  const [dialogoTarefaAberto, setDialogoTarefaAberto] = useState(false);
+  const [dialogoExclusaoAberto, setDialogoExclusaoAberto] = useState(false);
+  const [tarefaAtual, setTarefaAtual] = useState<Tarefa | null>(null);
+  const [modoDialogo, setModoDialogo] = useState<"adicionar" | "editar">("adicionar");
+  const [carregando, setCarregando] = useState(true);
 
-  // Load tasks from localStorage on initial render
+  // Carregar tarefas do localStorage na renderização inicial
   useEffect(() => {
-    const savedTasks = localStorage.getItem("tasks");
-    const savedTheme = localStorage.getItem("theme") as "light" | "dark";
+    const tarefasSalvas = localStorage.getItem("tarefas");
+    const temaSalvo = localStorage.getItem("tema") as "claro" | "escuro";
 
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
+    if (tarefasSalvas) {
+      try {
+        setTarefas(JSON.parse(tarefasSalvas));
+      } catch (error) {
+        console.error("Erro ao carregar tarefas:", error);
+        setTarefas([]);
+      }
     } else {
-      // Sample tasks for demonstration
-      const sampleTasks: Task[] = [
+      // Tarefas de exemplo para demonstração
+      const tarefasExemplo: Tarefa[] = [
         {
           id: uuidv4(),
-          title: "Complete project documentation",
-          category: "work",
-          priority: "high",
-          dueDate: new Date().toISOString().split("T")[0],
-          completed: false,
+          titulo: "Completar documentação do projeto",
+          categoria: "trabalho",
+          prioridade: "alta",
+          dataVencimento: new Date().toISOString().split("T")[0],
+          concluida: false,
         },
         {
           id: uuidv4(),
-          title: "Buy groceries",
-          category: "personal",
-          priority: "medium",
-          dueDate: new Date(Date.now() + 86400000).toISOString().split("T")[0],
-          completed: false,
+          titulo: "Comprar mantimentos",
+          categoria: "pessoal",
+          prioridade: "media",
+          dataVencimento: new Date(Date.now() + 86400000).toISOString().split("T")[0],
+          concluida: false,
         },
         {
           id: uuidv4(),
-          title: "Schedule dentist appointment",
-          category: "health",
-          priority: "low",
-          dueDate: new Date(Date.now() + 172800000).toISOString().split("T")[0],
-          completed: true,
+          titulo: "Agendar consulta odontológica",
+          categoria: "saude",
+          prioridade: "baixa",
+          dataVencimento: new Date(Date.now() + 172800000).toISOString().split("T")[0],
+          concluida: true,
         },
       ];
-      setTasks(sampleTasks);
-      localStorage.setItem("tasks", JSON.stringify(sampleTasks));
+      setTarefas(tarefasExemplo);
+      localStorage.setItem("tarefas", JSON.stringify(tarefasExemplo));
     }
 
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.documentElement.classList.toggle("dark", savedTheme === "dark");
+    if (temaSalvo) {
+      setTema(temaSalvo);
+      document.documentElement.classList.toggle("dark", temaSalvo === "escuro");
     }
 
-    // Simulate loading
-    setTimeout(() => setIsLoading(false), 1000);
+    // Simular carregamento
+    setTimeout(() => setCarregando(false), 800);
   }, []);
 
-  // Apply filters and search whenever tasks, filters or searchTerm change
+  // Aplicar filtros e busca sempre que tarefas, filtros ou termoBusca mudam
   useEffect(() => {
-    let result = [...tasks];
+    let resultado = [...tarefas];
 
-    // Apply category filter
-    if (filters.category !== "all") {
-      result = result.filter((task) => task.category === filters.category);
+    // Aplicar filtro de categoria
+    if (filtros.categoria !== "todas") {
+      resultado = resultado.filter((tarefa) => tarefa.categoria === filtros.categoria);
     }
 
-    // Apply priority filter
-    if (filters.priority !== "all") {
-      result = result.filter((task) => task.priority === filters.priority);
+    // Aplicar filtro de prioridade
+    if (filtros.prioridade !== "todas") {
+      resultado = resultado.filter((tarefa) => tarefa.prioridade === filtros.prioridade);
     }
 
-    // Apply date filter
-    if (filters.date !== "all") {
-      const today = new Date().toISOString().split("T")[0];
-      const weekLater = new Date(Date.now() + 7 * 86400000)
+    // Aplicar filtro de data
+    if (filtros.data !== "todas") {
+      const hoje = new Date().toISOString().split("T")[0];
+      const semanaDepois = new Date(Date.now() + 7 * 86400000)
         .toISOString()
         .split("T")[0];
-      const monthLater = new Date(Date.now() + 30 * 86400000)
+      const mesDepois = new Date(Date.now() + 30 * 86400000)
         .toISOString()
         .split("T")[0];
 
-      if (filters.date === "today") {
-        result = result.filter((task) => task.dueDate === today);
-      } else if (filters.date === "week") {
-        result = result.filter(
-          (task) => task.dueDate >= today && task.dueDate <= weekLater,
+      if (filtros.data === "hoje") {
+        resultado = resultado.filter((tarefa) => tarefa.dataVencimento === hoje);
+      } else if (filtros.data === "semana") {
+        resultado = resultado.filter(
+          (tarefa) => tarefa.dataVencimento >= hoje && tarefa.dataVencimento <= semanaDepois,
         );
-      } else if (filters.date === "month") {
-        result = result.filter(
-          (task) => task.dueDate >= today && task.dueDate <= monthLater,
+      } else if (filtros.data === "mes") {
+        resultado = resultado.filter(
+          (tarefa) => tarefa.dataVencimento >= hoje && tarefa.dataVencimento <= mesDepois,
         );
       }
     }
 
-    // Apply status filter
-    if (filters.status !== "all") {
-      result = result.filter((task) => {
-        if (filters.status === "completed") return task.completed;
-        if (filters.status === "pending") return !task.completed;
+    // Aplicar filtro de status
+    if (filtros.status !== "todas") {
+      resultado = resultado.filter((tarefa) => {
+        if (filtros.status === "concluidas") return tarefa.concluida;
+        if (filtros.status === "pendentes") return !tarefa.concluida;
         return true;
       });
     }
 
-    // Apply search term
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      result = result.filter(
-        (task) =>
-          task.title.toLowerCase().includes(term) ||
-          task.category.toLowerCase().includes(term),
+    // Aplicar termo de busca
+    if (termoBusca) {
+      const termo = termoBusca.toLowerCase();
+      resultado = resultado.filter(
+        (tarefa) =>
+          tarefa.titulo.toLowerCase().includes(termo) ||
+          tarefa.categoria.toLowerCase().includes(termo),
       );
     }
 
-    setFilteredTasks(result);
-  }, [tasks, filters, searchTerm]);
+    setTarefasFiltradas(resultado);
+  }, [tarefas, filtros, termoBusca]);
 
-  // Save tasks to localStorage whenever they change
+  // Salvar tarefas no localStorage sempre que mudarem
   useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
+    localStorage.setItem("tarefas", JSON.stringify(tarefas));
+  }, [tarefas]);
 
-  // Handle theme toggle
-  const handleThemeToggle = (newTheme: "light" | "dark") => {
-    setTheme(newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
-    localStorage.setItem("theme", newTheme);
+  // Tratar alternância de tema
+  const tratarAlternarTema = (novoTema: "claro" | "escuro") => {
+    setTema(novoTema);
+    document.documentElement.classList.toggle("dark", novoTema === "escuro");
+    localStorage.setItem("tema", novoTema);
   };
 
-  // Handle filter changes
-  const handleFilterChange = (newFilters: FilterState) => {
-    setFilters(newFilters);
+  // Tratar alterações de filtro
+  const tratarMudancaFiltro = (novosFiltros: EstadoFiltro) => {
+    setFiltros(novosFiltros);
   };
 
-  // Handle search
-  const handleSearch = (term: string) => {
-    setSearchTerm(term);
+  // Tratar busca
+  const tratarBusca = (termo: string) => {
+    setTermoBusca(termo);
   };
 
-  // Handle adding a new task
-  const handleAddTask = () => {
-    setDialogMode("add");
-    setCurrentTask(null);
-    setTaskDialogOpen(true);
+  // Tratar adição de nova tarefa
+  const tratarAdicionarTarefa = () => {
+    setModoDialogo("adicionar");
+    setTarefaAtual(null);
+    setDialogoTarefaAberto(true);
   };
 
-  // Handle editing a task
-  const handleEditTask = (id: string) => {
-    const taskToEdit = tasks.find((task) => task.id === id);
-    if (taskToEdit) {
-      setCurrentTask(taskToEdit);
-      setDialogMode("edit");
-      setTaskDialogOpen(true);
+  // Tratar edição de tarefa
+  const tratarEditarTarefa = (id: string) => {
+    const tarefaParaEditar = tarefas.find((tarefa) => tarefa.id === id);
+    if (tarefaParaEditar) {
+      setTarefaAtual(tarefaParaEditar);
+      setModoDialogo("editar");
+      setDialogoTarefaAberto(true);
     }
   };
 
-  // Handle saving a task (add or edit)
-  const handleSaveTask = (data: any) => {
-    if (dialogMode === "add") {
-      const newTask: Task = {
+  // Tratar salvamento de tarefa (adicionar ou editar)
+  const tratarSalvarTarefa = (dados: any) => {
+    if (modoDialogo === "adicionar") {
+      const novaTarefa: Tarefa = {
         id: uuidv4(),
-        title: data.title,
-        category: data.category,
-        priority: data.priority as "low" | "medium" | "high",
-        dueDate: data.dueDate
-          ? new Date(data.dueDate).toISOString().split("T")[0]
+        titulo: dados.titulo,
+        categoria: dados.categoria,
+        prioridade: dados.prioridade as "baixa" | "media" | "alta",
+        dataVencimento: dados.dataVencimento
+          ? new Date(dados.dataVencimento).toISOString().split("T")[0]
           : new Date().toISOString().split("T")[0],
-        completed: false,
+        concluida: false,
       };
-      setTasks([...tasks, newTask]);
+      setTarefas([...tarefas, novaTarefa]);
     } else {
-      // Edit existing task
-      if (currentTask) {
-        const updatedTasks = tasks.map((task) => {
-          if (task.id === currentTask.id) {
+      // Editar tarefa existente
+      if (tarefaAtual) {
+        const tarefasAtualizadas = tarefas.map((tarefa) => {
+          if (tarefa.id === tarefaAtual.id) {
             return {
-              ...task,
-              title: data.title,
-              category: data.category,
-              priority: data.priority as "low" | "medium" | "high",
-              dueDate: data.dueDate
-                ? new Date(data.dueDate).toISOString().split("T")[0]
-                : task.dueDate,
+              ...tarefa,
+              titulo: dados.titulo,
+              categoria: dados.categoria,
+              prioridade: dados.prioridade as "baixa" | "media" | "alta",
+              dataVencimento: dados.dataVencimento
+                ? new Date(dados.dataVencimento).toISOString().split("T")[0]
+                : tarefa.dataVencimento,
             };
           }
-          return task;
+          return tarefa;
         });
-        setTasks(updatedTasks);
+        setTarefas(tarefasAtualizadas);
       }
     }
-    setTaskDialogOpen(false);
+    setDialogoTarefaAberto(false);
   };
 
-  // Handle marking a task as complete/incomplete
-  const handleCompleteTask = (id: string) => {
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === id) {
-        return { ...task, completed: !task.completed };
+  // Tratar marcar tarefa como concluída/pendente
+  const tratarConcluirTarefa = (id: string) => {
+    const tarefasAtualizadas = tarefas.map((tarefa) => {
+      if (tarefa.id === id) {
+        return { ...tarefa, concluida: !tarefa.concluida };
       }
-      return task;
+      return tarefa;
     });
-    setTasks(updatedTasks);
+    setTarefas(tarefasAtualizadas);
   };
 
-  // Handle deleting a task
-  const handleDeleteTask = (id: string) => {
-    const taskToDelete = tasks.find((task) => task.id === id);
-    if (taskToDelete) {
-      setCurrentTask(taskToDelete);
-      setDeleteDialogOpen(true);
+  // Tratar exclusão de tarefa
+  const tratarExcluirTarefa = (id: string) => {
+    const tarefaParaExcluir = tarefas.find((tarefa) => tarefa.id === id);
+    if (tarefaParaExcluir) {
+      setTarefaAtual(tarefaParaExcluir);
+      setDialogoExclusaoAberto(true);
     }
   };
 
-  // Confirm task deletion
-  const confirmDeleteTask = () => {
-    if (currentTask) {
-      const updatedTasks = tasks.filter((task) => task.id !== currentTask.id);
-      setTasks(updatedTasks);
-      setDeleteDialogOpen(false);
+  // Confirmar exclusão de tarefa
+  const confirmarExclusaoTarefa = () => {
+    if (tarefaAtual) {
+      const tarefasAtualizadas = tarefas.filter((tarefa) => tarefa.id !== tarefaAtual.id);
+      setTarefas(tarefasAtualizadas);
+      setDialogoExclusaoAberto(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <TaskHeader
-        onAddTask={handleAddTask}
-        onThemeToggle={handleThemeToggle}
-        currentTheme={theme}
+        onAddTask={tratarAdicionarTarefa}
+        onThemeToggle={tratarAlternarTema}
+        currentTheme={tema}
+        labels={{
+          addButton: "Nova Tarefa",
+          themeToggle: tema === "claro" ? "Modo Escuro" : "Modo Claro",
+          appTitle: "Gerenciador de Tarefas"
+        }}
       />
 
       <TaskFilters
-        onFilterChange={handleFilterChange}
-        onSearch={handleSearch}
+        onFilterChange={tratarMudancaFiltro}
+        onSearch={tratarBusca}
+        labels={{
+          searchPlaceholder: "Buscar tarefas...",
+          categoryFilter: {
+            label: "Categoria",
+            options: [
+              { value: "todas", label: "Todas" },
+              { value: "trabalho", label: "Trabalho" },
+              { value: "pessoal", label: "Pessoal" },
+              { value: "saude", label: "Saúde" },
+              { value: "outros", label: "Outros" }
+            ]
+          },
+          priorityFilter: {
+            label: "Prioridade",
+            options: [
+              { value: "todas", label: "Todas" },
+              { value: "baixa", label: "Baixa" },
+              { value: "media", label: "Média" },
+              { value: "alta", label: "Alta" }
+            ]
+          },
+          dateFilter: {
+            label: "Data",
+            options: [
+              { value: "todas", label: "Todas" },
+              { value: "hoje", label: "Hoje" },
+              { value: "semana", label: "Esta Semana" },
+              { value: "mes", label: "Este Mês" }
+            ]
+          },
+          statusFilter: {
+            label: "Status",
+            options: [
+              { value: "todas", label: "Todas" },
+              { value: "pendentes", label: "Pendentes" },
+              { value: "concluidas", label: "Concluídas" }
+            ]
+          }
+        }}
       />
 
       <main className="flex-1 container mx-auto p-4 md:p-6">
-        {tasks.length === 0 && !isLoading ? (
+        {tarefas.length === 0 && !carregando ? (
           <EmptyState
-            title="No tasks yet"
-            description="Start by adding your first task"
-            onAction={handleAddTask}
+            title="Nenhuma tarefa ainda"
+            description="Comece adicionando sua primeira tarefa"
+            actionLabel="Adicionar Tarefa"
+            onAction={tratarAdicionarTarefa}
           />
         ) : (
           <TaskList
-            tasks={filteredTasks}
-            onComplete={handleCompleteTask}
-            onEdit={handleEditTask}
-            onDelete={handleDeleteTask}
-            isLoading={isLoading}
+            tasks={tarefasFiltradas}
+            onComplete={tratarConcluirTarefa}
+            onEdit={tratarEditarTarefa}
+            onDelete={tratarExcluirTarefa}
+            isLoading={carregando}
+            labels={{
+              loading: "Carregando tarefas...",
+              noResults: "Nenhuma tarefa encontrada para os filtros aplicados",
+              priorityLabels: {
+                baixa: "Baixa",
+                media: "Média",
+                alta: "Alta"
+              },
+              actions: {
+                edit: "Editar",
+                delete: "Excluir"
+              }
+            }}
           />
         )}
       </main>
 
-      {/* Add/Edit Task Dialog */}
+      {/* Diálogo de Adicionar/Editar Tarefa */}
       <TaskDialog
-        open={taskDialogOpen}
-        onOpenChange={setTaskDialogOpen}
-        onSave={handleSaveTask}
+        open={dialogoTarefaAberto}
+        onOpenChange={setDialogoTarefaAberto}
+        onSave={tratarSalvarTarefa}
         task={
-          currentTask
+          tarefaAtual
             ? {
-                title: currentTask.title,
-                category: currentTask.category,
-                priority: currentTask.priority,
-                dueDate: currentTask.dueDate
-                  ? new Date(currentTask.dueDate)
+                titulo: tarefaAtual.titulo,
+                categoria: tarefaAtual.categoria,
+                prioridade: tarefaAtual.prioridade,
+                dataVencimento: tarefaAtual.dataVencimento
+                  ? new Date(tarefaAtual.dataVencimento)
                   : null,
               }
             : undefined
         }
-        mode={dialogMode}
+        mode={modoDialogo}
+        labels={{
+          title: {
+            adicionar: "Adicionar Nova Tarefa",
+            editar: "Editar Tarefa"
+          },
+          form: {
+            titleField: {
+              label: "Título",
+              placeholder: "Digite o título da tarefa"
+            },
+            categoryField: {
+              label: "Categoria",
+              placeholder: "Selecione uma categoria",
+              options: [
+                { value: "trabalho", label: "Trabalho" },
+                { value: "pessoal", label: "Pessoal" },
+                { value: "saude", label: "Saúde" },
+                { value: "outros", label: "Outros" }
+              ]
+            },
+            priorityField: {
+              label: "Prioridade",
+              placeholder: "Selecione a prioridade",
+              options: [
+                { value: "baixa", label: "Baixa" },
+                { value: "media", label: "Média" },
+                { value: "alta", label: "Alta" }
+              ]
+            },
+            dateField: {
+              label: "Data de Vencimento",
+              placeholder: "Selecione uma data"
+            }
+          },
+          buttons: {
+            cancel: "Cancelar",
+            save: "Salvar"
+          }
+        }}
       />
 
-      {/* Delete Confirmation Dialog */}
+      {/* Diálogo de Confirmação de Exclusão */}
       <DeleteConfirmDialog
-        open={deleteDialogOpen}
-        onOpenChange={setDeleteDialogOpen}
-        onConfirm={confirmDeleteTask}
-        taskTitle={currentTask?.title}
+        open={dialogoExclusaoAberto}
+        onOpenChange={setDialogoExclusaoAberto}
+        onConfirm={confirmarExclusaoTarefa}
+        taskTitle={tarefaAtual?.titulo}
+        labels={{
+          title: "Excluir Tarefa",
+          description: "Tem certeza que deseja excluir esta tarefa? Esta ação não pode ser desfeita.",
+          cancelButton: "Cancelar",
+          confirmButton: "Excluir"
+        }}
       />
     </div>
   );

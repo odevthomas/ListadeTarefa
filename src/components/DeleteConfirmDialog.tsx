@@ -12,20 +12,20 @@ import {
 import { Trash2 } from "lucide-react";
 
 interface DeleteConfirmDialogProps {
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  onConfirm?: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onConfirm: () => void;
   title?: string;
   description?: string;
   taskTitle?: string;
 }
 
 const DeleteConfirmDialog = ({
-  open = false,
-  onOpenChange = () => {},
-  onConfirm = () => {},
+  open,
+  onOpenChange,
+  onConfirm,
   title = "Confirmar Exclusão",
-  description = "Tem certeza que deseja excluir esta tarefa? Esta ação não pode ser desfeita.",
+  description = "Esta ação não pode ser desfeita.",
   taskTitle = "Tarefa",
 }: DeleteConfirmDialogProps) => {
   return (
@@ -47,12 +47,18 @@ const DeleteConfirmDialog = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300">
+          <AlertDialogCancel
+            className="border border-indigo-200 dark:border-indigo-800 px-4 py-2 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300"
+            onClick={() => onOpenChange(false)}
+          >
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
-            className="bg-rose-500 hover:bg-rose-600 text-white dark:bg-rose-600 dark:hover:bg-rose-700"
+            onClick={() => {
+              onConfirm();
+              onOpenChange(false); // Fecha o diálogo após a ação
+            }}
+            className="bg-rose-600 text-white px-4 py-2 rounded-lg hover:bg-rose-700"
           >
             Excluir
           </AlertDialogAction>
