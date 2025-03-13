@@ -1,6 +1,6 @@
 # Gerenciador de Tarefas
 
-C:\Users\devel\OneDrive\Documentos\GitHub\Meu-portfolio-freelancer\public\Projetos\TodosProjetos(4).png
+![Projetos](https://github.com/user-attachments/assets/82fa2aad-6882-4d2a-98b4-009a942a2c14)
 
 ## Sobre o Projeto
 
