@@ -1,40 +1,59 @@
-# Gerenciador de Tarefas
+Aqui está o README ajustado para seguir o mesmo padrão que você forneceu, mantendo as imagens:
 
-![Projetos](https://github.com/user-attachments/assets/82fa2aad-6882-4d2a-98b4-009a942a2c14)
 
-## Sobre o Projeto
+---
+
+📌 Gerenciador de Tarefas
+
+
+
+Sobre o Projeto
 
 Um aplicativo moderno de gerenciamento de tarefas desenvolvido com React, TypeScript e Tailwind CSS. Esta aplicação permite aos usuários organizar suas atividades diárias de forma eficiente, com uma interface intuitiva e responsiva.
 
+🚀 Funcionalidades
 
-## Funcionalidades
+Interface Moderna: Design limpo e minimalista com suporte a temas claro e escuro
 
-- **Interface Moderna**: Design limpo e minimalista com suporte a temas claro e escuro
-- **Gerenciamento Completo**: Adicione, edite, exclua e marque tarefas como concluídas
-- **Organização Eficiente**: Categorize tarefas, defina prioridades e datas de vencimento
-- **Filtragem Avançada**: Filtre por categoria, prioridade, data e status
-- **Persistência de Dados**: Armazenamento local para manter suas tarefas entre sessões
-- **Design Responsivo**: Funciona perfeitamente em dispositivos desktop e móveis
+Gerenciamento Completo: Adicione, edite, exclua e marque tarefas como concluídas
 
-## Tecnologias Utilizadas
+Organização Eficiente: Categorize tarefas, defina prioridades e datas de vencimento
 
-- **React**: Biblioteca JavaScript para construção de interfaces
-- **TypeScript**: Superset tipado de JavaScript
-- **Tailwind CSS**: Framework CSS utilitário
-- **ShadcnUI**: Componentes de UI reutilizáveis
-- **React Hook Form**: Gerenciamento de formulários
-- **date-fns**: Manipulação de datas
-- **UUID**: Geração de IDs únicos
-- **Lucide React**: Ícones modernos e consistentes
+Filtragem Avançada: Filtre por categoria, prioridade, data e status
 
-## Pré-requisitos
+Persistência de Dados: Armazenamento local para manter suas tarefas entre sessões
 
-- Node.js (versão 18 ou superior)
-- npm ou yarn
+Design Responsivo: Funciona perfeitamente em dispositivos desktop e móveis
 
-## Instalação
 
-```bash
+🚀 Tecnologias Utilizadas
+
+React: Biblioteca JavaScript para construção de interfaces
+
+TypeScript: Superset tipado de JavaScript
+
+Tailwind CSS: Framework CSS utilitário
+
+ShadcnUI: Componentes de UI reutilizáveis
+
+React Hook Form: Gerenciamento de formulários
+
+date-fns: Manipulação de datas
+
+UUID: Geração de IDs únicos
+
+Lucide React: Ícones modernos e consistentes
+
+
+📋 Pré-requisitos
+
+Node.js (versão 18 ou superior)
+
+npm ou yarn
+
+
+📥 Instalação
+
 # Clone o repositório
 git clone https://github.com/seu-usuario/gerenciador-de-tarefas.git
 
@@ -50,13 +69,11 @@ yarn install
 npm run dev
 # ou
 yarn dev
-```
 
-O aplicativo estará disponível em `http://localhost:5173`
+O aplicativo estará disponível em http://localhost:5173.
 
-## Estrutura do Projeto
+📂 Estrutura do Projeto
 
-```
 src/
 ├── components/       # Componentes da aplicação
 │   ├── ui/           # Componentes de UI reutilizáveis (shadcn)
@@ -72,61 +89,88 @@ src/
 ├── lib/             # Utilitários e funções auxiliares
 ├── index.css        # Estilos globais
 └── App.tsx          # Componente principal e rotas
-```
 
-## Uso
+📝 Como Usar
 
-### Adicionar uma Nova Tarefa
+Adicionar uma Nova Tarefa
 
-1. Clique no botão "Nova Tarefa" no cabeçalho
-2. Preencha o título, categoria, prioridade e data de vencimento
-3. Clique em "Adicionar Tarefa"
+1. Clique no botão "Nova Tarefa" no cabeçalho.
 
-### Editar uma Tarefa
 
-1. Clique no ícone de edição (lápis) na tarefa desejada
-2. Modifique os campos necessários
-3. Clique em "Salvar Alterações"
+2. Preencha o título, categoria, prioridade e data de vencimento.
 
-### Marcar como Concluída
 
-- Clique no checkbox ao lado da tarefa ou no ícone de verificação
+3. Clique em "Adicionar Tarefa".
 
-### Excluir uma Tarefa
 
-1. Clique no menu de opções (três pontos) da tarefa
-2. Selecione "Excluir"
-3. Confirme a exclusão
 
-### Filtrar Tarefas
+Editar uma Tarefa
 
-- Use os filtros na barra superior para filtrar por categoria, prioridade, data ou status
-- Use a barra de pesquisa para encontrar tarefas específicas
+1. Clique no ícone de edição (lápis) na tarefa desejada.
 
-### Alternar Tema
 
-- Clique no ícone de sol/lua no cabeçalho para alternar entre os temas claro e escuro
+2. Modifique os campos necessários.
 
-## Contribuição
+
+3. Clique em "Salvar Alterações".
+
+
+
+Marcar como Concluída
+
+Clique no checkbox ao lado da tarefa ou no ícone de verificação.
+
+
+Excluir uma Tarefa
+
+1. Clique no menu de opções (três pontos) da tarefa.
+
+
+2. Selecione "Excluir".
+
+
+3. Confirme a exclusão.
+
+
+
+Filtrar Tarefas
+
+Use os filtros na barra superior para filtrar por categoria, prioridade, data ou status.
+
+Use a barra de pesquisa para encontrar tarefas específicas.
+
+
+Alternar Tema
+
+Clique no ícone de sol/lua no cabeçalho para alternar entre os temas claro e escuro.
+
+
+🤝 Contribuição
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests.
 
-1. Faça um fork do projeto
-2. Crie sua branch de feature (`git checkout -b feature/nova-funcionalidade`)
-3. Commit suas mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
-4. Push para a branch (`git push origin feature/nova-funcionalidade`)
-5. Abra um Pull Request
+1. Faça um fork do projeto.
 
-## Licença
 
-Este projeto está licenciado sob a licença MIT - veja o arquivo LICENSE para detalhes.
+2. Crie sua branch de feature (git checkout -b feature/nova-funcionalidade).
 
-## Contato
 
-Seu Nome - [seu-email@exemplo.com](mailto:seu-email@exemplo.com)
+3. Commit suas mudanças (git commit -m 'Adiciona nova funcionalidade').
 
-Link do Projeto: [https://github.com/seu-usuario/gerenciador-de-tarefas](https://github.com/seu-usuario/gerenciador-de-tarefas)
+
+4. Push para a branch (git push origin feature/nova-funcionalidade).
+
+
+5. Abra um Pull Request.
+
+
+
+📜 Licença
+
+Este projeto está licenciado sob a MIT License - veja o arquivo LICENSE para detalhes.
+
 
 ---
 
-Desenvolvido com ❤️ por Seu Nome
+Desenvolvido com ❤️ por Thomas Eduardo
+
